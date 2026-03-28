@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { postDownload, postPreview } from '@/api/client';
+import { DownloadOptionsForm } from '@/components/DownloadOptionsForm';
 import { PageHeader } from '@/components/PageHeader';
+import { YouTubeEmbedCard } from '@/components/YouTubeEmbedCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { defaultDownloadOptions, downloadOptionsToApiPayload } from '@/lib/downloadOptions';
+import { firstYoutubeIdFromText } from '@/lib/youtube';
+import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
 function parseUrls(raw: string): string[] {
@@ -18,12 +21,14 @@ function parseUrls(raw: string): string[] {
 
 export function HomePage() {
   const [urls, setUrls] = useState('');
-  const [audioOnly, setAudioOnly] = useState(false);
+  const [dlOptions, setDlOptions] = useState(defaultDownloadOptions);
   const [loading, setLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [previewJson, setPreviewJson] = useState<string | null>(null);
   const [downloadInfo, setDownloadInfo] = useState<string | null>(null);
+
+  const youtubeId = useMemo(() => firstYoutubeIdFromText(urls), [urls]);
 
   async function onPreview() {
     const list = parseUrls(urls);
@@ -64,7 +69,8 @@ export function HomePage() {
     }
     setDownloadLoading(true);
     try {
-      const data = await postDownload({ urls: list, audio_only: audioOnly });
+      const options = downloadOptionsToApiPayload(dlOptions);
+      const data = await postDownload({ urls: list, options });
       setDownloadInfo(
         JSON.stringify(
           {
@@ -72,7 +78,7 @@ export function HomePage() {
             output_dir: data.output_dir,
             log_file: data.log_file,
             url_count: data.url_count,
-            audio_only: data.audio_only,
+            options_sent: options,
           },
           null,
           2,
@@ -91,7 +97,7 @@ export function HomePage() {
     <>
       <PageHeader
         title="Download"
-        description="Paste video or playlist URLs. Preview checks the API; Download runs yt-dlp in the background into a folder on the server."
+        description="Paste URLs, tune yt-dlp options below, and start a background download. YouTube links show an embedded preview when we can parse a video ID."
       />
 
       <Card>
@@ -109,17 +115,6 @@ export function HomePage() {
               onChange={(e) => setUrls(e.target.value)}
               className="font-mono text-xs"
             />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="audio-only"
-              checked={audioOnly}
-              onCheckedChange={(v) => setAudioOnly(v === true)}
-            />
-            <Label htmlFor="audio-only" className="text-muted-foreground font-normal">
-              Audio only (best audio format, no video file)
-            </Label>
           </div>
 
           {error ? (
@@ -146,7 +141,7 @@ export function HomePage() {
               <p className="text-muted-foreground text-xs font-medium">Download started</p>
               <pre
                 className={cn(
-                  'max-h-48 overflow-auto rounded-md border bg-muted/30 p-3',
+                  'max-h-64 overflow-auto rounded-md border bg-muted/30 p-3',
                   'font-mono text-xs leading-relaxed',
                 )}
               >
@@ -157,11 +152,31 @@ export function HomePage() {
         </CardContent>
       </Card>
 
+      {youtubeId ? (
+        <div className="mt-6">
+          <YouTubeEmbedCard videoId={youtubeId} />
+        </div>
+      ) : null}
+
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Download options</CardTitle>
+          <CardDescription>
+            These map to an allowlisted subset of{' '}
+            <code className="text-xs">YoutubeDL</code> parameters on the server. More flags exist on the FAQ page;
+            ask to expose any you need.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DownloadOptionsForm value={dlOptions} onChange={setDlOptions} />
+        </CardContent>
+      </Card>
+
       {previewJson ? (
         <Card className="mt-6">
           <CardHeader>
             <CardTitle className="text-base">Preview response</CardTitle>
-            <CardDescription>Raw JSON from POST /api/preview when the backend exists.</CardDescription>
+            <CardDescription>Raw JSON from POST /api/preview.</CardDescription>
           </CardHeader>
           <CardContent>
             <pre

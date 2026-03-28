@@ -42,7 +42,6 @@ export type DownloadStartResponse = {
   ok: boolean;
   accepted: boolean;
   url_count: number;
-  audio_only: boolean;
   output_dir: string;
   log_file: string;
   message: string;
@@ -50,12 +49,12 @@ export type DownloadStartResponse = {
 
 export async function postDownload(body: {
   urls: string[];
-  audio_only?: boolean;
+  options?: Record<string, unknown>;
 }): Promise<DownloadStartResponse> {
   const res = await fetch(`${API_PREFIX}/download`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ urls: body.urls, audio_only: body.audio_only ?? false }),
+    body: JSON.stringify({ urls: body.urls, options: body.options ?? {} }),
   });
   const data = (await res.json().catch(() => ({}))) as DownloadStartResponse & { detail?: unknown };
   if (!res.ok) {

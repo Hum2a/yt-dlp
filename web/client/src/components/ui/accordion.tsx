@@ -43,7 +43,7 @@ const AccordionContent = React.forwardRef<
     className="overflow-hidden text-sm"
     {...props}
   >
-    <div className={cn('text-muted-foreground space-y-3 pb-4 pt-0', className)}>{children}</div>
+    <div className={cn('space-y-3 pb-4 pt-0 text-foreground', className)}>{children}</div>
   </AccordionPrimitive.Content>
 ));
 AccordionContent.displayName = AccordionPrimitive.Content.displayName;
