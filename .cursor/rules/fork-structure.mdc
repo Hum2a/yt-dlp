@@ -13,3 +13,9 @@ alwaysApply: true
 
 - Keep **UI-only** work under `web/`. Touch `yt_dlp/` only for downloader behavior, extractors, or shared config the UI truly needs.
 - Prefer **small, focused PR-sized diffs**; do not refactor unrelated `yt_dlp` modules when working on `web/`.
+
+# Dev from repo root
+
+- `npm run install:web` — root + client npm deps; creates `web/server/.venv` and `pip install -e web/server`.
+- `npm run dev` — Vite (5173) + uvicorn (8000) together.
+- `scripts/web-venv.mjs` / `scripts/run-dev-server.mjs` keep the Python side inside `.venv` (avoids global `Scripts` issues on Windows).

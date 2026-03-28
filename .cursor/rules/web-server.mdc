@@ -6,8 +6,9 @@ alwaysApply: false
 
 # Layout
 
-- Python package **`analytics`** (Hatchling) under `web/server/`: SQLite event store, nightly aggregation CLI `ytdlp-aggregate-analytics`.
-- Future FastAPI (or similar) should live alongside this package (e.g. `app/` or `server/`) and **import `yt_dlp` from the parent repo**, not a random global install.
+- Python packages under `web/server/`: **`analytics`** (SQLite + `ytdlp-aggregate-analytics`) and **`app`** (FastAPI + `ytdlp-web-server`).
+- From repo root: `npm run install:web` once (root npm deps, `web/client` deps, `web/server/.venv` + editable `ytdlp-web`). Then `npm run dev` runs Vite + uvicorn; `npm run dev:client` / `npm run dev:server` run one side.
+- **Import `yt_dlp` from the editable root install** (`pip install -e .` from yt-dlp) when wiring downloads, not an unrelated global package.
 
 # Conventions
 

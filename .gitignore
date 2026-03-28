@@ -134,3 +134,6 @@ yt-dlp-plugins
 
 # Packages
 yt_dlp_ejs/
+
+# Root npm (web dev orchestration)
+/node_modules/
