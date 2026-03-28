@@ -7,10 +7,14 @@ name = "ytdlp-web"
 version = "0.1.0"
 description = "Web UI server for yt-dlp fork (analytics and future API)"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+]
 
 [project.scripts]
 ytdlp-aggregate-analytics = "analytics.cli:main"
+ytdlp-web-server = "app.cli:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["analytics"]
+packages = ["analytics", "app"]
