@@ -1,4 +1,13 @@
-const API_PREFIX = '/api';
+/** In production, set ``VITE_API_BASE_URL`` to your API origin (no trailing slash), e.g. ``https://ytdlp-api.onrender.com``. */
+function apiBase(): string {
+  const raw = import.meta.env.VITE_API_BASE_URL;
+  if (typeof raw === 'string' && raw.trim()) {
+    return raw.trim().replace(/\/$/, '');
+  }
+  return '';
+}
+
+const API_PREFIX = `${apiBase()}/api`;
 
 export type ApiHealth = {
   ok: true;

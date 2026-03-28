@@ -1,0 +1,2 @@
+# SPA fallback (used by many static hosts; Render may also honor similar rules via dashboard)
+/*    /index.html   200

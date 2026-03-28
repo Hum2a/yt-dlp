@@ -1,5 +1,11 @@
+import os
 from pathlib import Path
 import sys
+
+from dotenv import load_dotenv
+
+_SERVER_DIR = Path(__file__).resolve().parents[1]
+load_dotenv(_SERVER_DIR / '.env')
 
 # Resolve fork root so ``import yt_dlp`` works when the API runs from ``web/server``.
 _ROOT = Path(__file__).resolve().parents[3]
@@ -15,9 +21,16 @@ from app.terminal import router as terminal_router
 
 app = FastAPI(title='yt-dlp Web API', version='0.1.0')
 
+_default_origins = ['http://127.0.0.1:5173', 'http://localhost:5173']
+_extra = os.environ.get('YTDLP_CORS_ORIGINS', '').strip()
+_cors_origins = [
+    *[o.strip() for o in _extra.split(',') if o.strip()],
+    *_default_origins,
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['http://127.0.0.1:5173', 'http://localhost:5173'],
+    allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],
