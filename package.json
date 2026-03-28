@@ -4,11 +4,14 @@
   "description": "Root scripts for the fork (web UI + API)",
   "scripts": {
     "install:web": "npm install && npm --prefix web/client install && node scripts/web-venv.mjs",
-    "dev:client": "npm --prefix web/client run dev",
+    "dev:client": "cross-env GOMAXPROCS=2 NODE_OPTIONS=--max-old-space-size=4096 npm --prefix web/client run dev",
+    "dev:client:fresh": "node scripts/clear-vite-cache.mjs && npm run dev:client",
     "dev:server": "node scripts/run-dev-server.mjs",
-    "dev": "concurrently -n client,server -c cyan,magenta \"npm run dev:client\" \"npm run dev:server\""
+    "dev": "concurrently -n client,server -c cyan,magenta \"npm run dev:client\" \"npm run dev:server\"",
+    "generate:catalog": "node scripts/run-generate-catalog.mjs"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3"
   }
 }
