@@ -20,8 +20,10 @@ export function HomePage() {
   const [urls, setUrls] = useState('');
   const [audioOnly, setAudioOnly] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [previewJson, setPreviewJson] = useState<string | null>(null);
+  const [downloadInfo, setDownloadInfo] = useState<string | null>(null);
 
   async function onPreview() {
     const list = parseUrls(urls);
@@ -89,7 +91,7 @@ export function HomePage() {
     <>
       <PageHeader
         title="Download"
-        description="Paste video or playlist URLs, then preview metadata. Download will use the same options you configure across these pages once the API is wired."
+        description="Paste video or playlist URLs. Preview checks the API; Download runs yt-dlp in the background into a folder on the server."
       />
 
       <Card>
