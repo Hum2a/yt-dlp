@@ -1,0 +1,15 @@
+---
+description: yt-dlp fork — where web and core live
+alwaysApply: true
+---
+
+# Repository layout
+
+- **`yt_dlp/`** — upstream-style CLI/library; avoid coupling UI concerns here.
+- **`web/client/`** — Vite React SPA (Tailwind + shadcn).
+- **`web/server/`** — Python analytics (and later HTTP API) for the UI.
+
+# Changes
+
+- Keep **UI-only** work under `web/`. Touch `yt_dlp/` only for downloader behavior, extractors, or shared config the UI truly needs.
+- Prefer **small, focused PR-sized diffs**; do not refactor unrelated `yt_dlp` modules when working on `web/`.

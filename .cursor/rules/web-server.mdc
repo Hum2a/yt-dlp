@@ -1,0 +1,16 @@
+---
+description: yt-dlp web UI — Python server & analytics
+globs: web/server/**/*
+alwaysApply: false
+---
+
+# Layout
+
+- Python package **`analytics`** (Hatchling) under `web/server/`: SQLite event store, nightly aggregation CLI `ytdlp-aggregate-analytics`.
+- Future FastAPI (or similar) should live alongside this package (e.g. `app/` or `server/`) and **import `yt_dlp` from the parent repo**, not a random global install.
+
+# Conventions
+
+- **Analytics**: `record_event(name, props)` only; no PII or full URLs in props on shared hosts. DB path from env `YTDLP_ANALYTICS_DB`.
+- **API**: validate all client input; allowlist `YoutubeDL` params; never expose exec/shell from public routes.
+- Match **yt-dlp** style for any Python that touches upstream code: follow existing formatters/linters in `yt-dlp/pyproject.toml` when editing core.

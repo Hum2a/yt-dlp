@@ -1,0 +1,27 @@
+---
+description: yt-dlp web UI — React client (Vite, Tailwind, shadcn)
+globs: web/client/**/*
+alwaysApply: false
+---
+
+# Stack
+
+- **Vite + React + TypeScript** in `web/client/`.
+- **Tailwind CSS v4** via `@tailwindcss/vite`; design tokens live in `src/index.css` (`@import "tailwindcss"` + `@theme inline` + CSS variables).
+- **shadcn/ui** (New York): primitives under `src/components/ui/`, copied/generated style—use `cn()` from `@/lib/utils` for class merging.
+- **Paths**: import app code with `@/` → `src/` (see `tsconfig` + `vite.config.ts`).
+
+# Organization
+
+- `src/pages/` — route-level screens only (compose UI, call hooks/API).
+- `src/components/` — shared layout (`Layout.tsx`, `PageHeader.tsx`) and `ui/` (shadcn).
+- `src/api/` — fetch helpers; no UI.
+- `src/hooks/` — reusable React hooks.
+- **Do not** add CSS Modules for new UI; use Tailwind utilities + shadcn variants.
+- Add new shadcn components with `npx shadcn@latest add <name>` from `web/client` (keeps `components.json` in sync).
+
+# Code style
+
+- Functional components; named exports for pages (`export function HomePage`).
+- Prefer `type` for props; keep handlers small; surface API errors as user-readable strings.
+- Avoid third-party analytics or external font CDNs unless explicitly requested.
