@@ -18,9 +18,17 @@
 
 yt-dlp is a feature-rich command-line audio/video downloader with support for [thousands of sites](supportedsites.md). The project is a fork of [youtube-dl](https://github.com/ytdl-org/youtube-dl) based on the now inactive [youtube-dlc](https://github.com/blackjack4494/yt-dlc).
 
+<!-- MANPAGE: BEGIN EXCLUDED SECTION -->
+> **This fork** also includes a **browser UI** and HTTP API under [`web/`](web/). Start with [Web UI](#web-ui) below, or read [`deployment.md`](deployment.md) for hosting.
+<!-- MANPAGE: END EXCLUDED SECTION -->
+
 <!-- MANPAGE: MOVE "USAGE AND OPTIONS" SECTION HERE -->
 
 <!-- MANPAGE: BEGIN EXCLUDED SECTION -->
+* [WEB UI](#web-ui)
+    * [Quick start (local)](#quick-start-local)
+    * [Production deploy](#production-deploy)
+    * [Operational notes](#operational-notes)
 * [INSTALLATION](#installation)
     * [Detailed instructions](https://github.com/yt-dlp/yt-dlp/wiki/Installation)
     * [Release Files](#release-files)
@@ -72,6 +80,42 @@ yt-dlp is a feature-rich command-line audio/video downloader with support for [t
     * [Developer Instructions](CONTRIBUTING.md#developer-instructions)
 * [WIKI](https://github.com/yt-dlp/yt-dlp/wiki)
     * [FAQ](https://github.com/yt-dlp/yt-dlp/wiki/FAQ)
+<!-- MANPAGE: END EXCLUDED SECTION -->
+
+<!-- MANPAGE: BEGIN EXCLUDED SECTION -->
+## WEB UI
+
+This repository ships a **React + Vite** frontend and **FastAPI** backend that run the same `yt-dlp` codebase you install from this tree: URL-based downloads with an allowlisted option set, a **sanitized terminal** that forwards safe CLI flags to `python -m yt_dlp`, and a **Features / FAQ** page generated from the real CLI catalog.
+
+| Path | Role |
+|------|------|
+| [`web/client/`](web/client/) | SPA (TypeScript, Tailwind, Radix-style UI) |
+| [`web/server/`](web/server/) | REST API (`uvicorn`), loads `web/server/.env` via `python-dotenv` |
+
+More detail: [`web/README.md`](web/README.md).
+
+### Quick start (local)
+
+You need **Node.js**, **Python 3.10+**, and **[FFmpeg](https://ffmpeg.org/)** on your `PATH` for merged formats, audio extraction, and similar post-processing.
+
+```bash
+npm run install:web   # root + client deps; creates web/server/.venv and installs the API package
+npm run dev           # Vite (default http://localhost:5173) + API (http://127.0.0.1:8000); /api is proxied
+```
+
+- **Environment templates:** copy [`web/client/.env.example`](web/client/.env.example) → `web/client/.env` and [`web/server/.env.example`](web/server/.env.example) → `web/server/.env` when you need overrides (optional for typical local dev).
+- **One side only:** `npm run dev:client` or `npm run dev:server`.
+- **CLI catalog JSON** (FAQ page): regenerated automatically before `npm run build` in the client; run `npm run generate:catalog` from the repo root to refresh manually.
+
+If the Vite dev build runs out of memory on Windows, use `npm run dev:client:fresh` (clears the Vite cache and limits worker memory; see root `package.json`).
+
+### Production deploy
+
+Use **[`deployment.md`](deployment.md)** for a concrete **Render**-style split: Python **Web Service** (API at repo root + `pip install -e ".[default]"` + `pip install -e web/server`) and **Static Site** (`web/client`, publish `dist/`). Set **`YTDLP_CORS_ORIGINS`** on the API and **`VITE_API_BASE_URL`** (no trailing slash) on the frontend build when the UI and API are on different origins.
+
+### Operational notes
+
+A public deployment runs **yt-dlp on your servers** and writes to disk. Treat the API as privileged: restrict who can reach it, monitor **`YTDLP_DOWNLOAD_DIR`**, and read the security section in **`deployment.md`**. Third-party analytics are not used; optional first-party SQLite metrics live under `web/server/analytics/` if you enable them.
 <!-- MANPAGE: END EXCLUDED SECTION -->
 
 

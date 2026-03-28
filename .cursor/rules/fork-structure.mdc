@@ -7,7 +7,7 @@ alwaysApply: true
 
 - **`yt_dlp/`** — upstream-style CLI/library; avoid coupling UI concerns here.
 - **`web/client/`** — Vite React SPA (Tailwind + shadcn).
-- **`web/server/`** — Python analytics (and later HTTP API) for the UI.
+- **`web/server/`** — FastAPI HTTP API, optional SQLite analytics, and download/terminal endpoints for the UI.
 
 # Changes
 

@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Stack
 
-- **Vite + React + TypeScript** in `web/client/`.
+- **Vite + React + TypeScript** in `web/client/`. Optional **`VITE_API_BASE_URL`** (no trailing slash) for a remote API; template in `.env.example`.
 - **Tailwind CSS v4** via `@tailwindcss/vite`; design tokens live in `src/index.css` (`@import "tailwindcss"` + `@theme inline` + CSS variables).
 - **shadcn/ui** (New York): primitives under `src/components/ui/`, copied/generated style—use `cn()` from `@/lib/utils` for class merging.
 - **Paths**: import app code with `@/` → `src/` (see `tsconfig` + `vite.config.ts`).

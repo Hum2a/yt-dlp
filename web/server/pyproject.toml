@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "ytdlp-web"
 version = "0.1.0"
-description = "Web UI server for yt-dlp fork (analytics and future API)"
+description = "FastAPI server for yt-dlp fork web UI (downloads, terminal API, optional analytics)"
 requires-python = ">=3.10"
 dependencies = [
     "fastapi>=0.115.0",

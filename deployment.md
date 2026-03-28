@@ -1,4 +1,19 @@
-# Deploying the yt-dlp Web UI (Render)
+# Deploying the yt-dlp Web UI
+
+Guide focused on **Render** (one Python Web Service + one Static Site). Adapt the same split to any host that can run **Python + FFmpeg** for the API and serve **static** `dist/` for the UI.
+
+## Environment file templates (local)
+
+Before running the stack locally, you can copy:
+
+| Copy | To |
+|------|-----|
+| [`web/client/.env.example`](web/client/.env.example) | `web/client/.env` |
+| [`web/server/.env.example`](web/server/.env.example) | `web/server/.env` |
+
+Vite reads `VITE_*` at dev/build time; the API loads `web/server/.env` on startup. On Render, set the same variables in each service’s dashboard instead of committing `.env`.
+
+---
 
 This fork ships two deployable pieces:
 
@@ -44,7 +59,7 @@ cd web/server && uvicorn app.main:app --host 0.0.0.0 --port $PORT
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `YTDLP_CORS_ORIGINS` | **Yes** (for separate static site) | Comma-separated browser origins allowed to call the API, e.g. `https://your-frontend.onrender.com` |
+| `YTDLP_CORS_ORIGINS` | **Yes** (for separate static site) | Comma-separated browser origins allowed to call the API, e.g. `https://your-frontend.onrender.com`. Local dev defaults already allow common `localhost` / `127.0.0.1` UI ports; see `web/server/.env.example`. |
 | `YTDLP_DOWNLOAD_DIR` | Optional | Absolute path for downloads. Default: `web/server/data/downloads` under the service (ephemeral on Render unless you attach a **disk**). |
 | `YTDLP_ANALYTICS_DB` | Optional | SQLite path for first-party analytics (if you use the aggregation CLI on a scheduler). |
 
@@ -78,7 +93,7 @@ Vite only reads variables prefixed with `VITE_` **at build time**.
 |----------|----------|---------|
 | `VITE_API_BASE_URL` | **Yes** (for split deploy) | `https://ytdlp-api.onrender.com` |
 
-Do **not** include a trailing slash. Leave unset only if the UI and API are served from the **same origin** (e.g. one reverse proxy); then the app uses relative `/api/...` URLs.
+Do **not** include a trailing slash. Leave unset only if the UI and API are served from the **same origin** (e.g. one reverse proxy); then the app uses relative `/api/...` URLs. See `web/client/.env.example`.
 
 After changing env vars, **trigger a new deploy** so the client rebuilds.
 
@@ -129,4 +144,4 @@ Set `YTDLP_ANALYTICS_DB` to a persistent path if you attach a disk.
 | API only | `npm run dev:server` |
 | UI only | `npm run dev:client` |
 
-Local CORS defaults include `localhost:5173`; production relies on **`YTDLP_CORS_ORIGINS`** and **`VITE_API_BASE_URL`**.
+Local CORS defaults include `localhost:5173`; production relies on **`YTDLP_CORS_ORIGINS`** and **`VITE_API_BASE_URL`**. Use the **`.env.example`** files under `web/client` and `web/server` when you need documented defaults (see [§ Environment file templates](#environment-file-templates-local)).
