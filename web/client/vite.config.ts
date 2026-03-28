@@ -13,6 +13,21 @@ export default defineConfig({
     },
   },
   plugins: [react(), tailwindcss()],
+  /* Esbuild source maps spike RAM on Windows (VirtualAlloc errno 1455) during dep optimize. */
+  esbuild: {
+    sourcemap: false,
+  },
+  css: {
+    devSourcemap: false,
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      sourcemap: false,
+    },
+  },
+  build: {
+    sourcemap: false,
+  },
   server: {
     proxy: {
       '/api': {

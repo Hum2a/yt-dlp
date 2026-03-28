@@ -1,6 +1,17 @@
+from pathlib import Path
+import sys
+
+# Resolve fork root so ``import yt_dlp`` works when the API runs from ``web/server``.
+_ROOT = Path(__file__).resolve().parents[3]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+
+from app.download import router as download_router
+from app.terminal import router as terminal_router
 
 app = FastAPI(title='yt-dlp Web API', version='0.1.0')
 
@@ -11,6 +22,9 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
+
+app.include_router(terminal_router, prefix='/api')
+app.include_router(download_router, prefix='/api')
 
 
 @app.get('/api/health')

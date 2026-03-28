@@ -18,6 +18,8 @@ import { cn } from '@/lib/utils';
 
 const NAV: readonly { to: string; label: string; end?: boolean }[] = [
   { to: '/', label: 'Download', end: true },
+  { to: '/faq', label: 'FAQ' },
+  { to: '/terminal', label: 'CLI' },
   { to: '/formats', label: 'Formats' },
   { to: '/subtitles', label: 'Subtitles' },
   { to: '/audio', label: 'Audio' },
@@ -121,7 +123,7 @@ export function Layout() {
         </aside>
 
         <main className="min-w-0 flex-1">
-          <div className="mx-auto max-w-3xl px-4 py-6 md:px-8 md:py-8">
+          <div className="mx-auto max-w-5xl px-4 py-6 md:px-8 md:py-8">
             <Outlet />
           </div>
         </main>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { postPreview } from '@/api/client';
+import { postDownload, postPreview } from '@/api/client';
 import { PageHeader } from '@/components/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -52,6 +52,39 @@ export function HomePage() {
     }
   }
 
+  async function onDownload() {
+    const list = parseUrls(urls);
+    setError(null);
+    setDownloadInfo(null);
+    if (list.length === 0) {
+      setError('Add at least one URL (one per line).');
+      return;
+    }
+    setDownloadLoading(true);
+    try {
+      const data = await postDownload({ urls: list, audio_only: audioOnly });
+      setDownloadInfo(
+        JSON.stringify(
+          {
+            message: data.message,
+            output_dir: data.output_dir,
+            log_file: data.log_file,
+            url_count: data.url_count,
+            audio_only: data.audio_only,
+          },
+          null,
+          2,
+        ),
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Download request failed');
+    } finally {
+      setDownloadLoading(false);
+    }
+  }
+
+  const hasUrls = parseUrls(urls).length > 0;
+
   return (
     <>
       <PageHeader
@@ -83,7 +116,7 @@ export function HomePage() {
               onCheckedChange={(v) => setAudioOnly(v === true)}
             />
             <Label htmlFor="audio-only" className="text-muted-foreground font-normal">
-              Prefer audio-only (UI hint; API will map to format options later)
+              Audio only (best audio format, no video file)
             </Label>
           </div>
 
@@ -94,13 +127,31 @@ export function HomePage() {
           ) : null}
 
           <div className="flex flex-wrap gap-2">
-            <Button type="button" onClick={onPreview} disabled={loading}>
+            <Button type="button" onClick={onPreview} disabled={loading || downloadLoading}>
               {loading ? 'Preview…' : 'Preview'}
             </Button>
-            <Button type="button" variant="secondary" disabled>
-              Download
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={onDownload}
+              disabled={!hasUrls || downloadLoading || loading}
+            >
+              {downloadLoading ? 'Starting…' : 'Download'}
             </Button>
           </div>
+          {downloadInfo ? (
+            <div className="space-y-1">
+              <p className="text-muted-foreground text-xs font-medium">Download started</p>
+              <pre
+                className={cn(
+                  'max-h-48 overflow-auto rounded-md border bg-muted/30 p-3',
+                  'font-mono text-xs leading-relaxed',
+                )}
+              >
+                {downloadInfo}
+              </pre>
+            </div>
+          ) : null}
         </CardContent>
       </Card>
 

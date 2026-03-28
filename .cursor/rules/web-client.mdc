@@ -13,7 +13,7 @@ alwaysApply: false
 
 # Organization
 
-- `src/pages/` — route-level screens only (compose UI, call hooks/API).
+- `src/pages/` — route-level screens only (compose UI, call hooks/API). Includes **FAQ** (`/faq`, loads `/ytdlp-cli-catalog.json`) and **CLI** (`/terminal`, calls `POST /api/terminal/run`).
 - `src/components/` — shared layout (`Layout.tsx`, `PageHeader.tsx`) and `ui/` (shadcn).
 - `src/api/` — fetch helpers; no UI.
 - `src/hooks/` — reusable React hooks.
